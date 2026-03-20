@@ -1,5 +1,3 @@
-# Guidewire---ch3stpa1n 
-
 # [cite_start]SafeMe: AI-Powered Parametric Insurance for Q-Commerce Delivery Partners [cite: 133, 208]
 
 ## The Core Strategy
