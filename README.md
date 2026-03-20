@@ -15,17 +15,15 @@
 6. [Parametric Trigger System](#6-parametric-trigger-system)
 7. [AI & ML Integration](#7-ai--ml-integration)
 8. [Fraud, Adversarial & Spoofing Detection](#8-fraud-adversarial--spoofing-detection)
+   - [8.1 GPS Spoofing Prevention — Technical Layer](#81-gps-spoofing-prevention--technical-layer)
+   - [8.2 Real-Time Continuous Verification Architecture](#82-real-time-continuous-verification-architecture)
 9. [Adversarial Defense & Anti-Spoofing Strategy](#9-adversarial-defense--anti-spoofing-strategy)
-   - [9.1 Differentiating Genuine Riders from Spoofers](#91-the-three-real-attack-vectors-and-their-defenses)
+   - [9.1 The Three Real Attack Vectors and Their Defenses](#91-the-three-real-attack-vectors-and-their-defenses)
    - [9.2 Detecting a Coordinated Fraud Ring](#92-detecting-a-coordinated-ring--the-graph-layer)
    - [9.3 UX Balance — Flagged Claims Without Penalizing Honest Riders](#93-ux-balance--handling-flagged-accounts-without-penalizing-honest-riders)
-   - [9.4 GPS Spoofing Prevention — Technical Layer](#94-gps-spoofing-prevention--technical-layer)
-   - [9.5 Real-Time Continuous Verification Architecture](#95-real-time-continuous-verification-architecture)
 10. [Automated Claims & Payout Pipeline](#10-automated-claims--payout-pipeline)
 11. [Integration Capabilities](#11-integration-capabilities)
 12. [Tech Stack](#12-tech-stack)
-13. [Development Plan](#13-development-plan)
-
 ---
 
 ## 1. Problem Statement
@@ -476,6 +474,176 @@ Any fail → Hold + flag for manual review
 
 ---
 
+### 8.1 GPS Spoofing Prevention — Technical Layer
+
+#### How GPS Spoofing Actually Works on Android
+
+Consumer GPS spoofing on Android works through the OS-level **mock location** developer setting. Apps like Fake GPS or GPS JoyStick register themselves as mock location providers and override the device's real GPS chip output with a fabricated coordinate. The attack is cheap, requires no root access on modern Android, and is widely used.
+
+This gives us a clear detection surface — the OS itself knows when a location is being mocked.
+
+On iOS, spoofing requires either a jailbroken device or a Mac running Xcode's location simulation. This is meaningfully harder, which is why the realistic threat model in the Indian Q-Commerce context is primarily Android.
+
+#### Detection Layer 1 — Mock Location Flag
+
+Android's `Location` object exposes `isMock()` (Android 12+) or `isFromMockProvider()` (older Android). When true, the location is provably coming from a software mock provider rather than the hardware GPS chip.
+
+In our React Native implementation, we wrap this in a native module using `react-native-background-geolocation`. Every location event received by the backend is tagged with a `mock: true/false` field derived from this hardware-level flag. Any location event tagged `mock: true` is immediately discarded and the session risk score is escalated.
+
+This check alone defeats the majority of consumer spoofing apps. Advanced apps attempt to suppress this flag by operating at the kernel level — which requires root access. Root detection (below) handles that case.
+
+#### Detection Layer 2 — Google Play Integrity API
+
+Google Play Integrity API tells you three things about the device making a request:
+
+- Whether the app binary is genuine and unmodified (not a repackaged APK)
+- Whether the device has a certified, unmodified Android build (not rooted, not a custom ROM)
+- Whether the app is running in a genuine Android environment (not an emulator)
+
+A rooted device can suppress the `isMock()` flag. The Play Integrity API catches the root itself. Combined, these two checks cover both the casual spoofer (mock location flag) and the sophisticated spoofer (rooted device suppressing the flag).
+
+Called at policy activation and once per session start. The integrity verdict is stored with the session record.
+
+#### Detection Layer 3 — Sensor Fusion Consistency Score
+
+A real device physically present at location X will have multiple independent sensors all agreeing with each other. A spoofed GPS overrides only the GPS output — it cannot simultaneously override all other signals.
+
+For every location update, the backend computes a sensor fusion consistency score across:
+
+| Signal | What we check |
+|---|---|
+| Cell tower triangulation | Does independent cell tower positioning agree with GPS within ~400m? |
+| WiFi positioning | Do visible WiFi networks match networks known to exist near the declared coordinates? |
+| Accelerometer | Does motion sensor activity match the movement implied by consecutive GPS coordinates? |
+| GPS speed plausibility | Is the speed between consecutive coordinates physically possible on a delivery bike in city traffic? |
+| Location jitter | Does the GPS show natural micro-variance (±5–15m for a stationary device) or unnaturally perfect static precision? |
+| Altitude consistency | Does reported altitude match the known terrain elevation at the declared coordinates? |
+
+Each signal votes independently. The fusion score is the weighted agreement across all signals. A spoofer sitting at home with a fake coordinate in Koramangala will have cell towers pointing to their real location, WiFi networks belonging to their home area, near-zero accelerometer activity, and unnaturally static GPS precision. The score collapses.
+
+This score feeds directly into the live session risk score maintained per worker in Redis.
+
+#### Detection Layer 4 — Speed Impossibility Check
+
+Simple backend logic, no ML required. If two consecutive GPS coordinates imply a travel speed that is physically impossible — more than 60 km/h in a dense urban zone, or a coordinate jump of 3km in under 60 seconds — the update is flagged as a teleport event.
+
+One teleport event = soft flag. Two within a session = hard flag. Three = session suspended pending review.
+
+#### Detection Layer 5 — Basal Location Profile (Prior Delivery History)
+
+This is GigShield's most durable anti-spoofing layer. The core insight: **a spoofer can fake their live GPS stream, but they cannot retroactively fake weeks of delivery history.**
+
+After a rider's first 2 weeks on the platform, their delivery activity builds a location fingerprint — which zones they operate in, at what times of day, what their typical movement radius looks like, how long they stay near the dark store. This fingerprint is stored as a probability distribution over zones and time windows.
+
+When a live session's location data deviates significantly from the rider's historical fingerprint — a rider who has spent every weekday morning within 1.5km of their Dharavi dark store for 4 weeks suddenly pinging from Bandra — the deviation is flagged as a zone drift anomaly. The severity scales with how far outside their historical distribution the current location falls.
+
+New riders (first 2 weeks) have no fingerprint yet. They fall back on zone-level consensus and sensor fusion alone — slightly lower trust until the fingerprint builds naturally through genuine activity. A fraudster who has never actually worked in a declared zone cannot fabricate 6 weeks of authentic delivery movement placing them there.
+
+---
+
+### 8.2 Real-Time Continuous Verification Architecture
+
+The fraud and spoofing detection above depends on a continuous, reliable stream of worker state data. This section describes how that stream is built — the architecture that makes "real-time" mean something precise rather than just a marketing claim.
+
+#### What Real-Time Actually Means Here
+
+Real-time in GigShield's context means: **continuously knowing, with high confidence, whether a worker is genuinely present and active in their zone during a disruption window.**
+
+This is not the same as constant GPS polling every second. Naïve constant polling drains battery, gets spoofed easily on slow connections, and creates more noise than signal. The correct architecture is near-real-time with intelligent adaptive sampling — data flows continuously but efficiently.
+
+#### Worker Session State Machine
+
+Each active worker is modeled as a continuously updated state machine in Redis:
+
+```
+States:
+  INACTIVE        — policy active, worker not yet detected in zone
+  ACTIVE          — worker present and moving, normal delivery pattern
+  STATIONARY      — worker present but not moving (break, dark store wait)
+  DISRUPTION_ZONE — disruption event active in worker's zone
+  FLAGGED         — session risk score above threshold, under review
+  DISCONNECTED    — connection lost, buffered data being awaited
+
+Transitions:
+  INACTIVE → ACTIVE          on first valid location update near dark store
+  ACTIVE → STATIONARY        on movement velocity dropping below threshold for 5+ minutes
+  ACTIVE → DISRUPTION_ZONE   on parametric trigger firing in worker's zone
+  ANY → FLAGGED              on risk score crossing threshold
+  ANY → DISCONNECTED         on WebSocket connection drop
+  DISCONNECTED → (previous)  on reconnection with valid buffered data
+```
+
+Redis stores the current state, last known coordinates, last update timestamp, current session risk score, and movement history buffer for each active worker. TTL is set to 7 days (policy week duration).
+
+#### Persistent Connection — WebSockets over REST
+
+The app maintains a persistent WebSocket connection to the backend via Socket.IO for the duration of each active policy week. This replaces the polling model entirely.
+
+Benefits over REST polling:
+- No repeated HTTP handshake overhead
+- Server can push disruption alerts to the device instantly
+- Session state is maintained server-side with low latency updates
+- Connection drops are detectable immediately (vs polling where a dropped worker just stops sending)
+
+On connection drop: the app falls back to local buffering (see below) and attempts reconnection every 30 seconds.
+
+#### Adaptive Location Sampling
+
+The app does not sample at a fixed rate. Sampling frequency adapts to context:
+
+| Worker state | Sampling interval | Rationale |
+|---|---|---|
+| Stationary (no active disruption) | Every 60 seconds | Battery conservation, low information value |
+| Moving (active delivery) | Every 10 seconds | Captures delivery trip pattern |
+| Disruption event active in zone | Every 5 seconds | Maximum precision during eligibility window |
+| Session flagged | Every 5 seconds | Increased scrutiny |
+| Disconnected / reconnecting | Local buffer, flush on reconnect | Network unavailable |
+
+Implemented via `react-native-background-geolocation` running as a foreground service with a persistent notification. This is mandatory on modern Android to prevent the OS from killing the location service during aggressive battery optimization. The notification is minimal and rider-friendly: "GigShield is verifying your coverage zone."
+
+Data is batched — the app accumulates 3–5 location readings locally and sends them as a single payload every 10–30 seconds rather than one HTTP/WS call per reading. This reduces connection overhead while maintaining near-real-time fidelity.
+
+#### Handling Network Drops (India Reality)
+
+Network connectivity in Indian urban areas is genuinely unreliable — cell tower congestion during storms, dead zones in dense buildings near dark stores, carrier switching. GigShield's architecture treats disconnection as a normal operating condition, not an exception.
+
+When the WebSocket connection drops:
+- The app continues sampling locally at the current adaptive rate
+- All readings are stored in a local SQLite buffer with precise device timestamps
+- The buffer holds a maximum of 15 minutes of readings (older readings are dropped)
+- On reconnection, the buffered payload is flushed to the server with original timestamps intact
+
+On the backend, buffered data is validated before acceptance:
+- Timestamps must be continuous — no gaps larger than the declared sampling interval
+- Speed between consecutive buffered points must be physically plausible
+- The reconnection event itself is logged with its duration — extended disconnection during a disruption event is noted but not penalized (network degradation is expected during storms)
+- Buffered data submitted more than 20 minutes after the fact is rejected — it cannot be reliably distinguished from data generated offline to game a trigger
+
+#### Inline Risk Score Updates
+
+Fraud scoring does not happen as a batch check at payout time. Every incoming location update triggers a lightweight risk score update on the live session:
+
+```
+On each location update received:
+  1. Run mock location flag check
+  2. Run speed plausibility check against previous coordinate
+  3. Update sensor fusion consistency score
+  4. Compare against basal location profile (zone drift check)
+  5. Update session risk score in Redis (weighted rolling average)
+  6. If score crosses soft threshold → flag session state
+  7. If score crosses hard threshold → suspend session, notify admin
+```
+
+This means by the time a parametric trigger fires and a claim is initiated, the session's risk score already reflects the full history of that session's location behavior — not just a snapshot at the moment of the trigger. A fraudster who has been pinging from an implausible location for 2 hours before the trigger fires will have a degraded risk score long before the payout decision is made.
+
+#### Geofencing as the Eligibility Engine
+
+Mapbox Geofencing API defines the boundary of each dark store's delivery zone. The geofence is the primary eligibility check — when a disruption trigger fires, the backend queries Redis for all workers currently in `ACTIVE` or `STATIONARY` state within the relevant geofence, cross-checks their session risk scores, and initiates claims only for workers who are both inside the zone and above the minimum trust threshold.
+
+Workers who are outside their geofence when the trigger fires — regardless of reason — are not eligible for that event's payout. This is clearly communicated in the policy terms at onboarding.
+
+---
+
 ## 9. Adversarial Defense & Anti-Spoofing Strategy
 
 ### The Architectural Insight That Changes Everything
@@ -638,179 +806,6 @@ GigShield handles this with a **weather-context GPS tolerance layer:**
 - Never silently denying a claim — every hold and rejection produces a notification with a reason and a next step
 - Never using a hold as a permanent denial by default — every hold has a defined resolution clock
 
----
-
-### 9.4 GPS Spoofing Prevention — Technical Layer
-
-#### How GPS Spoofing Actually Works on Android
-
-Consumer GPS spoofing on Android works through the OS-level **mock location** developer setting. Apps like Fake GPS or GPS JoyStick register themselves as mock location providers and override the device's real GPS chip output with a fabricated coordinate. The attack is cheap, requires no root access on modern Android, and is widely used.
-
-This gives us a clear detection surface — the OS itself knows when a location is being mocked.
-
-On iOS, spoofing requires either a jailbroken device or a Mac running Xcode's location simulation. This is meaningfully harder, which is why the realistic threat model in the Indian Q-Commerce context is primarily Android.
-
-#### Detection Layer 1 — Mock Location Flag
-
-Android's `Location` object exposes `isMock()` (Android 12+) or `isFromMockProvider()` (older Android). When true, the location is provably coming from a software mock provider rather than the hardware GPS chip.
-
-In our React Native implementation, we wrap this in a native module using `react-native-background-geolocation`. Every location event received by the backend is tagged with a `mock: true/false` field derived from this hardware-level flag. Any location event tagged `mock: true` is immediately discarded and the session risk score is escalated.
-
-This check alone defeats the majority of consumer spoofing apps. Advanced apps attempt to suppress this flag by operating at the kernel level — which requires root access. Root detection (below) handles that case.
-
-#### Detection Layer 2 — Google Play Integrity API
-
-Google Play Integrity API tells you three things about the device making a request:
-
-- Whether the app binary is genuine and unmodified (not a repackaged APK)
-- Whether the device has a certified, unmodified Android build (not rooted, not a custom ROM)
-- Whether the app is running in a genuine Android environment (not an emulator)
-
-A rooted device can suppress the `isMock()` flag. The Play Integrity API catches the root itself. Combined, these two checks cover both the casual spoofer (mock location flag) and the sophisticated spoofer (rooted device suppressing the flag).
-
-Called at policy activation and once per session start. The integrity verdict is stored with the session record.
-
-#### Detection Layer 3 — Sensor Fusion Consistency Score
-
-A real device physically present at location X will have multiple independent sensors all agreeing with each other. A spoofed GPS overrides only the GPS output — it cannot simultaneously override all other signals.
-
-For every location update, the backend computes a sensor fusion consistency score across:
-
-| Signal | What we check |
-|---|---|
-| Cell tower triangulation | Does independent cell tower positioning agree with GPS within ~400m? |
-| WiFi positioning | Do visible WiFi networks match networks known to exist near the declared coordinates? |
-| Accelerometer | Does motion sensor activity match the movement implied by consecutive GPS coordinates? |
-| GPS speed plausibility | Is the speed between consecutive coordinates physically possible on a delivery bike in city traffic? |
-| Location jitter | Does the GPS show natural micro-variance (±5–15m for a stationary device) or unnaturally perfect static precision? |
-| Altitude consistency | Does reported altitude match the known terrain elevation at the declared coordinates? |
-
-Each signal votes independently. The fusion score is the weighted agreement across all signals. A spoofer sitting at home with a fake coordinate in Koramangala will have cell towers pointing to their real location, WiFi networks belonging to their home area, near-zero accelerometer activity, and unnaturally static GPS precision. The score collapses.
-
-This score feeds directly into the live session risk score maintained per worker in Redis.
-
-#### Detection Layer 4 — Speed Impossibility Check
-
-Simple backend logic, no ML required. If two consecutive GPS coordinates imply a travel speed that is physically impossible — more than 60 km/h in a dense urban zone, or a coordinate jump of 3km in under 60 seconds — the update is flagged as a teleport event.
-
-One teleport event = soft flag. Two within a session = hard flag. Three = session suspended pending review.
-
-#### Detection Layer 5 — Basal Location Profile (Prior Delivery History + UPI SMS)
-
-This is GigShield's most durable anti-spoofing layer. The core insight: **a spoofer can fake their live GPS stream, but they cannot retroactively fake weeks of delivery history.**
-
-**Prior delivery history fingerprint:**
-
-After a rider's first 2 weeks on the platform, their delivery activity builds a location fingerprint — which zones they operate in, at what times of day, what their typical movement radius looks like, how long they stay near the dark store. This fingerprint is stored as a probability distribution over zones and time windows.
-
-When a live session's location data deviates significantly from the rider's historical fingerprint — a rider who has spent every weekday morning within 1.5km of their Dharavi dark store for 4 weeks suddenly pinging from Bandra — the deviation is flagged as a zone drift anomaly. The severity scales with how far outside their historical distribution the current location falls.
-
-New riders (first 2 weeks) have no fingerprint yet. They fall back on zone-level consensus and sensor fusion alone — slightly lower trust until the fingerprint builds naturally through genuine activity. A fraudster who has never actually worked in a declared zone cannot fabricate 6 weeks of authentic delivery movement placing them there.
-
----
-
-### 9.5 Real-Time Continuous Verification Architecture
-
-The fraud and spoofing detection above depends on a continuous, reliable stream of worker state data. This section describes how that stream is built — the architecture that makes "real-time" mean something precise rather than just a marketing claim.
-
-#### What Real-Time Actually Means Here
-
-Real-time in GigShield's context means: **continuously knowing, with high confidence, whether a worker is genuinely present and active in their zone during a disruption window.**
-
-This is not the same as constant GPS polling every second. Naïve constant polling drains battery, gets spoofed easily on slow connections, and creates more noise than signal. The correct architecture is near-real-time with intelligent adaptive sampling — data flows continuously but efficiently.
-
-#### Worker Session State Machine
-
-Each active worker is modeled as a continuously updated state machine in Redis:
-
-```
-States:
-  INACTIVE        — policy active, worker not yet detected in zone
-  ACTIVE          — worker present and moving, normal delivery pattern
-  STATIONARY      — worker present but not moving (break, dark store wait)
-  DISRUPTION_ZONE — disruption event active in worker's zone
-  FLAGGED         — session risk score above threshold, under review
-  DISCONNECTED    — connection lost, buffered data being awaited
-
-Transitions:
-  INACTIVE → ACTIVE          on first valid location update near dark store
-  ACTIVE → STATIONARY        on movement velocity dropping below threshold for 5+ minutes
-  ACTIVE → DISRUPTION_ZONE   on parametric trigger firing in worker's zone
-  ANY → FLAGGED              on risk score crossing threshold
-  ANY → DISCONNECTED         on WebSocket connection drop
-  DISCONNECTED → (previous)  on reconnection with valid buffered data
-```
-
-Redis stores the current state, last known coordinates, last update timestamp, current session risk score, and movement history buffer for each active worker. TTL is set to 7 days (policy week duration).
-
-#### Persistent Connection — WebSockets over REST
-
-The app maintains a persistent WebSocket connection to the backend via Socket.IO for the duration of each active policy week. This replaces the polling model entirely.
-
-Benefits over REST polling:
-- No repeated HTTP handshake overhead
-- Server can push disruption alerts to the device instantly
-- Session state is maintained server-side with low latency updates
-- Connection drops are detectable immediately (vs polling where a dropped worker just stops sending)
-
-On connection drop: the app falls back to local buffering (see below) and attempts reconnection every 30 seconds.
-
-#### Adaptive Location Sampling
-
-The app does not sample at a fixed rate. Sampling frequency adapts to context:
-
-| Worker state | Sampling interval | Rationale |
-|---|---|---|
-| Stationary (no active disruption) | Every 60 seconds | Battery conservation, low information value |
-| Moving (active delivery) | Every 10 seconds | Captures delivery trip pattern |
-| Disruption event active in zone | Every 5 seconds | Maximum precision during eligibility window |
-| Session flagged | Every 5 seconds | Increased scrutiny |
-| Disconnected / reconnecting | Local buffer, flush on reconnect | Network unavailable |
-
-Implemented via `react-native-background-geolocation` running as a foreground service with a persistent notification. This is mandatory on modern Android to prevent the OS from killing the location service during aggressive battery optimization. The notification is minimal and rider-friendly: "GigShield is verifying your coverage zone."
-
-Data is batched — the app accumulates 3–5 location readings locally and sends them as a single payload every 10–30 seconds rather than one HTTP/WS call per reading. This reduces connection overhead while maintaining near-real-time fidelity.
-
-#### Handling Network Drops (India Reality)
-
-Network connectivity in Indian urban areas is genuinely unreliable — cell tower congestion during storms, dead zones in dense buildings near dark stores, carrier switching. GigShield's architecture treats disconnection as a normal operating condition, not an exception.
-
-When the WebSocket connection drops:
-- The app continues sampling locally at the current adaptive rate
-- All readings are stored in a local SQLite buffer with precise device timestamps
-- The buffer holds a maximum of 15 minutes of readings (older readings are dropped)
-- On reconnection, the buffered payload is flushed to the server with original timestamps intact
-
-On the backend, buffered data is validated before acceptance:
-- Timestamps must be continuous — no gaps larger than the declared sampling interval
-- Speed between consecutive buffered points must be physically plausible
-- The reconnection event itself is logged with its duration — extended disconnection during a disruption event is noted but not penalized (network degradation is expected during storms)
-- Buffered data submitted more than 20 minutes after the fact is rejected — it cannot be reliably distinguished from data generated offline to game a trigger
-
-#### Inline Risk Score Updates
-
-Fraud scoring does not happen as a batch check at payout time. Every incoming location update triggers a lightweight risk score update on the live session:
-
-```
-On each location update received:
-  1. Run mock location flag check
-  2. Run speed plausibility check against previous coordinate
-  3. Update sensor fusion consistency score
-  4. Compare against basal location profile (zone drift check)
-  5. Update session risk score in Redis (weighted rolling average)
-  6. If score crosses soft threshold → flag session state
-  7. If score crosses hard threshold → suspend session, notify admin
-```
-
-This means by the time a parametric trigger fires and a claim is initiated, the session's risk score already reflects the full history of that session's location behavior — not just a snapshot at the moment of the trigger. A fraudster who has been pinging from an implausible location for 2 hours before the trigger fires will have a degraded risk score long before the payout decision is made.
-
-#### Geofencing as the Eligibility Engine
-
-Mapbox Geofencing API defines the boundary of each dark store's delivery zone. The geofence is the primary eligibility check — when a disruption trigger fires, the backend queries Redis for all workers currently in `ACTIVE` or `STATIONARY` state within the relevant geofence, cross-checks their session risk scores, and initiates claims only for workers who are both inside the zone and above the minimum trust threshold.
-
-Workers who are outside their geofence when the trigger fires — regardless of reason — are not eligible for that event's payout. This is clearly communicated in the policy terms at onboarding.
-
----
 
 ## 10. Automated Claims & Payout Pipeline
 
@@ -935,6 +930,8 @@ Q-Commerce platforms (Zepto, Blinkit) do not expose public APIs for worker data.
 | Auth | Firebase Auth | Phone OTP at onboarding |
 | Graph ML | PyTorch Geometric | GNN for fraud ring detection across account relationship graph |
 | Hosting | AWS EC2 / Railway | Backend + ML service deployment |
+
+---
 
 
 ---
