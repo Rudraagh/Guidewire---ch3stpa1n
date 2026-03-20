@@ -16,11 +16,11 @@
 7. [AI & ML Integration](#7-ai--ml-integration)
 8. [Fraud, Adversarial & Spoofing Detection](#8-fraud-adversarial--spoofing-detection)
 9. [Adversarial Defense & Anti-Spoofing Strategy](#9-adversarial-defense--anti-spoofing-strategy)
-   - 9.1 Differentiating Genuine Riders from Spoofers
-   - 9.2 Detecting a Coordinated Fraud Ring
-   - 9.3 UX Balance — Flagged Claims Without Penalizing Honest Riders
-   - 9.4 GPS Spoofing Prevention — Technical Layer
-   - 9.5 Real-Time Continuous Verification Architecture
+   - [9.1 Differentiating Genuine Riders from Spoofers](#91-the-three-real-attack-vectors-and-their-defenses)
+   - [9.2 Detecting a Coordinated Fraud Ring](#92-detecting-a-coordinated-ring--the-graph-layer)
+   - [9.3 UX Balance — Flagged Claims Without Penalizing Honest Riders](#93-ux-balance--handling-flagged-accounts-without-penalizing-honest-riders)
+   - [9.4 GPS Spoofing Prevention — Technical Layer](#94-gps-spoofing-prevention--technical-layer)
+   - [9.5 Real-Time Continuous Verification Architecture](#95-real-time-continuous-verification-architecture)
 10. [Automated Claims & Payout Pipeline](#10-automated-claims--payout-pipeline)
 11. [Integration Capabilities](#11-integration-capabilities)
 12. [Tech Stack](#12-tech-stack)
@@ -935,6 +935,7 @@ Q-Commerce platforms (Zepto, Blinkit) do not expose public APIs for worker data.
 | Auth | Firebase Auth | Phone OTP at onboarding |
 | Graph ML | PyTorch Geometric | GNN for fraud ring detection across account relationship graph |
 | Hosting | AWS EC2 / Railway | Backend + ML service deployment |
+
 
 ---
 
