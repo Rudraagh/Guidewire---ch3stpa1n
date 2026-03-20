@@ -41,4 +41,4 @@ SafeMe leverages advanced Machine Learning to ensure dynamic pricing and platfor
 While Phase 1 relies on standard APIs, our immediate roadmap includes integrating a custom NLP engine. We plan to deploy multimodal text analysis on live local social media streams and public chats. By analyzing high-velocity text data for distress keywords and sudden sentiment shifts, SafeMe will be able to detect and trigger payouts for flash strikes and unannounced curfews faster than traditional news outlets can report them.
 
 ## Phase 1 Demo & Strategy Video
-[Click here to watch our 2-minute pitch and prototype walkthrough] -> (Insert Public Link Here)
+link
