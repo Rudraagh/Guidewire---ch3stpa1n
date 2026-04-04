@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Shield, 
   ChevronRight, 
+  Check,
   CloudRain, 
   Wind, 
   Thermometer, 
@@ -79,6 +80,198 @@ interface Claim {
   reason?: string;
 }
 
+function GigShieldLanding({
+  embedded = false,
+  onContinue,
+  onAdmin,
+}: {
+  embedded?: boolean;
+  onContinue: () => void;
+  onAdmin: () => void;
+}) {
+  const inner = (
+    <>
+        <div className="flex flex-col items-center text-center">
+          <p className="font-dm mb-5 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1 text-[11px] font-medium tracking-wide text-orange-300/90">
+            Zepto · Blinkit · Dunzo riders in India
+          </p>
+
+          <div
+            className="relative flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-[22px] bg-gradient-to-br from-[#FF7A3D] via-[#FF5A1F] to-[#8B1500]"
+            style={{ boxShadow: "0 16px 48px rgba(255,90,31,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset" }}
+          >
+            <Shield className="h-10 w-10 text-white" strokeWidth={1.25} aria-hidden />
+            <Check
+              className="absolute h-[19px] w-[19px] text-amber-200"
+              strokeWidth={3}
+              aria-hidden
+            />
+          </div>
+
+          <p className="font-syne mt-4 text-[15px] font-bold uppercase tracking-[0.28em] text-white/45">
+            GigShield
+          </p>
+
+          <div className="font-dm mt-4 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-500/15 px-3.5 py-1.5 text-[12px] font-medium text-orange-300">
+            <span className="relative flex h-[6px] w-[6px] shrink-0">
+              <span
+                className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-60"
+                aria-hidden
+              />
+              <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-orange-400" />
+            </span>
+            Live · 5 auto-triggers watching your zone
+          </div>
+
+          <h1 className="font-syne mt-7 max-w-[320px] text-[2.65rem] font-extrabold leading-[1.08] tracking-tight text-white sm:text-[2.85rem]">
+            Income that stays{" "}
+            <span className="bg-gradient-to-r from-[#FFB547] via-[#FF6B2B] to-[#FF3D00] bg-clip-text text-transparent">
+              on
+            </span>{" "}
+            when the app goes off
+          </h1>
+
+          <p className="font-dm mt-5 max-w-[340px] text-[15px] leading-relaxed text-white/50">
+            Parametric cover for delivery partners — rain, heat, bad air, traffic, platform outages.
+            We detect it, we pay to your UPI. No forms. No waiting room.
+          </p>
+
+          <ul className="font-dm mt-6 w-full max-w-[340px] space-y-3 text-left text-[13px] text-white/55">
+            {[
+              "Priced from your zone forecast + weekly earnings",
+              "Caps and rules applied fairly, in ₹ and IST",
+              "Built to feel like a safety net, not a bank app",
+            ].map((line) => (
+              <li key={line} className="flex gap-3">
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500"
+                  aria-hidden
+                />
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mx-auto w-full max-w-[340px] rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+          <div className="grid grid-cols-3 divide-x divide-white/[0.07]">
+            <div className="px-2 py-4 text-center">
+              <p className="font-syne text-[20px] font-bold text-white">₹320</p>
+              <p className="font-dm mt-1 text-[11px] text-white/35">avg payout</p>
+            </div>
+            <div className="px-2 py-4 text-center">
+              <p className="font-syne text-[20px] font-bold text-white">&lt;20m</p>
+              <p className="font-dm mt-1 text-[11px] text-white/35">to UPI</p>
+            </div>
+            <div className="px-2 py-4 text-center">
+              <p className="font-syne text-[20px] font-bold text-white">₹70</p>
+              <p className="font-dm mt-1 text-[11px] text-white/35">from / week</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-2 px-1">
+          {[
+            { icon: "🌧️", label: "Heavy rain" },
+            { icon: "🌫️", label: "AQI spike" },
+            { icon: "🌡️", label: "Extreme heat" },
+            { icon: "🚧", label: "Traffic halt" },
+            { icon: "📱", label: "Platform down" },
+          ].map((c) => (
+            <div
+              key={c.label}
+              className="font-dm flex items-center gap-1.5 rounded-lg border border-orange-500/15 bg-orange-500/[0.07] px-2.5 py-1.5 text-[11px] text-white/55"
+            >
+              <span className="text-[13px] leading-none" aria-hidden>
+                {c.icon}
+              </span>
+              {c.label}
+            </div>
+          ))}
+        </div>
+
+        <div className="mx-auto flex w-full max-w-[340px] gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-3.5">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-lg"
+            aria-hidden
+          >
+            ⚡
+          </div>
+          <div className="min-w-0 text-left">
+            <p className="font-dm text-[13px] font-semibold text-emerald-400">Zero-touch payout</p>
+            <p className="font-dm mt-0.5 text-[12px] text-white/50">
+              Trigger fires → amount calculated → UPI credit (demo simulates instantly)
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-auto flex w-full max-w-[340px] flex-col gap-3 pt-1">
+          <button
+            type="button"
+            onClick={onContinue}
+            className="font-syne w-full rounded-2xl bg-gradient-to-r from-[#FF6B2B] to-[#C41E0E] px-4 py-4 text-[16px] font-bold text-white shadow-[0_10px_40px_rgba(255,107,43,0.42)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_48px_rgba(255,107,43,0.55)] active:translate-y-0"
+          >
+            Get protected this week →
+          </button>
+          <button
+            type="button"
+            onClick={onAdmin}
+            className="font-dm w-full rounded-2xl border border-white/12 bg-white/[0.03] py-3.5 text-[14px] font-medium text-white/45 transition-colors hover:border-orange-500/25 hover:bg-orange-500/5 hover:text-orange-200/80"
+          >
+            Insurer admin →
+          </button>
+        </div>
+    </>
+  );
+
+  return (
+    <>
+      {!embedded && (
+        <>
+          <div
+            className="pointer-events-none fixed inset-0 z-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,107,43,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,43,0.035) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
+            }}
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none fixed top-[-20%] left-1/2 z-0 h-[min(56vh,460px)] w-[min(140vw,580px)] -translate-x-1/2 rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(255,107,43,0.22) 0%, rgba(255,107,43,0.06) 45%, transparent 72%)",
+            }}
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none fixed bottom-[-25%] right-[-30%] z-0 h-[min(52vh,420px)] w-[min(120vw,520px)] rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 65%)",
+            }}
+            aria-hidden
+          />
+        </>
+      )}
+
+      {embedded ? (
+        <div className="relative z-10 flex w-full flex-col gap-7 py-1">{inner}</div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-md flex-1 flex-col gap-7 px-5 pb-10 pt-11"
+        >
+          {inner}
+        </motion.div>
+      )}
+    </>
+  );
+}
+
 export default function App() {
   const [rider, setRider] = useState<Rider | null>(() => {
     const saved = localStorage.getItem("gigshield_rider");
@@ -93,6 +286,13 @@ export default function App() {
   const [adminClaims, setAdminClaims] = useState<Claim[]>([]);
   const [view, setView] = useState<'dashboard' | 'history' | 'zones' | 'profile' | 'admin'>('dashboard');
   const [step, setStep] = useState(-3); // -3: Start, -2: Login vs New, 21: OTP login
+  const [appEntryUnlocked, setAppEntryUnlocked] = useState(() => {
+    try {
+      return sessionStorage.getItem("gs_open") === "1";
+    } catch {
+      return false;
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [adminStats, setAdminStats] = useState<any>(null);
   const [allRiders, setAllRiders] = useState<Rider[]>([]);
@@ -334,6 +534,12 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem("gigshield_rider");
     localStorage.removeItem("gigshield_admin");
+    try {
+      sessionStorage.removeItem("gs_open");
+    } catch {
+      /* ignore */
+    }
+    setAppEntryUnlocked(false);
     setRider(null);
     setAdmin(null);
     setPolicy(null);
@@ -623,20 +829,90 @@ export default function App() {
     (!rider && !admin && (onboardingSteps as readonly number[]).includes(step)) ||
     (rider && step >= 0);
 
+  const isLandingHero = step === -3 && !rider && appEntryUnlocked;
+
+  if (!rider && !admin && !appEntryUnlocked) {
+    return (
+      <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#0A0A0F] text-white">
+        <GigShieldLanding
+          embedded={false}
+          onContinue={() => {
+            try {
+              sessionStorage.setItem("gs_open", "1");
+            } catch {
+              /* ignore */
+            }
+            setAppEntryUnlocked(true);
+            setStep(-2);
+          }}
+          onAdmin={() => {
+            try {
+              sessionStorage.setItem("gs_open", "1");
+            } catch {
+              /* ignore */
+            }
+            setAppEntryUnlocked(true);
+            setStep(10);
+          }}
+        />
+      </div>
+    );
+  }
+
   if (showOnboardingShell) {
     return (
-      <div className="min-h-screen bg-neutral-950 text-white p-6 flex flex-col justify-center max-w-md mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12 text-center"
-        >
-          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-900/20">
-            <Shield className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">GigShield</h1>
-          <p className="text-neutral-400 mt-2">Parametric Income Protection</p>
-        </motion.div>
+      <div
+        className={cn(
+          "min-h-screen text-white max-w-md mx-auto relative overflow-x-hidden",
+          isLandingHero
+            ? "bg-[#0A0A0F] flex flex-col px-5 pt-10 pb-10"
+            : "bg-neutral-950 p-6 flex flex-col justify-center"
+        )}
+      >
+        {isLandingHero && (
+          <>
+            <div
+              className="pointer-events-none fixed inset-0 z-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none fixed top-[-15%] left-1/2 z-0 w-[min(130vw,560px)] h-[min(52vh,440px)] -translate-x-1/2 rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(255,107,43,0.12) 0%, transparent 68%)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none fixed bottom-[-12%] right-[-25%] z-0 h-[min(48vh,400px)] w-[min(110vw,500px)] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 68%)",
+              }}
+              aria-hidden
+            />
+          </>
+        )}
+
+        <div className={cn("relative z-10", isLandingHero ? "flex flex-1 flex-col" : "")}>
+          {!isLandingHero && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 text-center"
+            >
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 shadow-lg shadow-orange-950/30">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight">GigShield</h1>
+              <p className="text-neutral-400 mt-2">Parametric Income Protection</p>
+            </motion.div>
+          )}
 
         <AnimatePresence mode="wait">
           {step === -3 && !rider && (
@@ -645,21 +921,13 @@ export default function App() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              className="space-y-8"
+              className="flex flex-1 flex-col"
             >
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">Income protection for delivery partners</h2>
-                <p className="text-sm text-neutral-400">
-                  Automatic payouts when hyperlocal disruptions hit your zone — no claim forms.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setStep(-2)}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-blue-900/30 transition-colors"
-              >
-                Start
-              </button>
+              <GigShieldLanding
+                embedded
+                onContinue={() => setStep(-2)}
+                onAdmin={() => setStep(10)}
+              />
             </motion.div>
           )}
 
@@ -680,10 +948,10 @@ export default function App() {
                     setLoginOtp("");
                     setStep(21);
                   }}
-                  className="bg-neutral-900 border border-neutral-700 p-6 rounded-2xl flex flex-col items-center gap-3 hover:border-blue-500 transition-all group text-left"
+                  className="bg-neutral-900 border border-neutral-700 p-6 rounded-2xl flex flex-col items-center gap-3 hover:border-orange-500 transition-all group text-left"
                 >
-                  <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center group-hover:bg-blue-600/30">
-                    <User className="w-6 h-6 text-blue-400" />
+                  <div className="w-12 h-12 bg-orange-600/20 rounded-xl flex items-center justify-center group-hover:bg-orange-600/30">
+                    <User className="w-6 h-6 text-orange-400" />
                   </div>
                   <div className="text-center w-full">
                     <p className="font-bold text-white">Login</p>
@@ -693,22 +961,22 @@ export default function App() {
                 <button 
                   type="button"
                   onClick={() => setStep(0)}
-                  className="bg-blue-600 border border-blue-500 p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-blue-500 transition-all group shadow-lg shadow-blue-900/20"
+                  className="bg-orange-600 border border-orange-500 p-6 rounded-2xl flex flex-col items-center gap-3 hover:bg-orange-500 transition-all group shadow-lg shadow-orange-950/25"
                 >
                   <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-white/20">
                     <Activity className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-center">
                     <p className="font-bold text-white">New rider</p>
-                    <p className="text-xs text-blue-100">Zone & earnings → weekly premium → pay & activate</p>
+                    <p className="text-xs text-orange-100">Zone & earnings → weekly premium → pay & activate</p>
                   </div>
                 </button>
                 <button 
                   type="button"
                   onClick={() => setStep(10)}
-                  className="bg-neutral-900 border border-neutral-800 p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-purple-600/50 transition-all"
+                  className="bg-neutral-900 border border-neutral-800 p-4 rounded-2xl flex flex-col items-center gap-2 hover:border-orange-600/50 transition-all"
                 >
-                  <p className="text-sm font-bold text-purple-400">Insurer admin</p>
+                  <p className="text-sm font-bold text-orange-400">Insurer admin</p>
                   <p className="text-[10px] text-neutral-500">Dashboard & triggers</p>
                 </button>
               </div>
@@ -740,7 +1008,7 @@ export default function App() {
                   <input 
                     type="text" 
                     placeholder="admin"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-purple-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={adminLogin.user}
                     onChange={e => setAdminLogin({...adminLogin, user: e.target.value})}
                   />
@@ -750,7 +1018,7 @@ export default function App() {
                   <input 
                     type="password" 
                     placeholder="••••••••"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-purple-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={adminLogin.pass}
                     onChange={e => setAdminLogin({...adminLogin, pass: e.target.value})}
                   />
@@ -768,7 +1036,7 @@ export default function App() {
                       alert("Invalid credentials. Try admin/admin");
                     }
                   }}
-                  className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2"
+                  className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2"
                 >
                   Login <ChevronRight className="w-5 h-5" />
                 </button>
@@ -795,9 +1063,9 @@ export default function App() {
                 <h2 className="text-xl font-bold">Login</h2>
                 <p className="text-xs text-neutral-500 mt-1">
                   Use the same name and phone you registered with. Demo seed:{" "}
-                  <span className="text-blue-400 font-mono">Amit Kumar</span> /{" "}
-                  <span className="text-blue-400 font-mono">9999999999</span> — OTP{" "}
-                  <span className="text-blue-400 font-mono">123456</span>
+                  <span className="text-orange-400 font-mono">Amit Kumar</span> /{" "}
+                  <span className="text-orange-400 font-mono">9999999999</span> — OTP{" "}
+                  <span className="text-orange-400 font-mono">123456</span>
                 </p>
               </div>
               <div className="space-y-2">
@@ -806,7 +1074,7 @@ export default function App() {
                   type="text"
                   autoComplete="name"
                   placeholder="As on your registration"
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                   value={loginName}
                   onChange={(e) => setLoginName(e.target.value)}
                 />
@@ -818,7 +1086,7 @@ export default function App() {
                   inputMode="tel"
                   autoComplete="tel"
                   placeholder="e.g. 9999999999"
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                   value={loginPhone}
                   onChange={(e) => setLoginPhone(e.target.value)}
                 />
@@ -866,7 +1134,7 @@ export default function App() {
                     inputMode="numeric"
                     maxLength={8}
                     placeholder="123456"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none tracking-widest font-mono"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none tracking-widest font-mono"
                     value={loginOtp}
                     onChange={(e) => setLoginOtp(e.target.value.replace(/\D/g, ""))}
                   />
@@ -911,7 +1179,7 @@ export default function App() {
                     setLoading(false);
                   }
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? "Verifying…" : "Verify & continue"}{" "}
                 <ChevronRight className="w-5 h-5" />
@@ -948,14 +1216,14 @@ export default function App() {
                     <button 
                       onClick={detectLocation}
                       disabled={detecting}
-                      className="text-[10px] text-blue-500 font-bold uppercase flex items-center gap-1 hover:text-blue-400 disabled:opacity-50"
+                      className="text-[10px] text-orange-500 font-bold uppercase flex items-center gap-1 hover:text-orange-400 disabled:opacity-50"
                     >
                       <MapPin className={cn("w-3 h-3", detecting && "animate-bounce")} />
                       {detecting ? "Detecting..." : "Detect Location"}
                     </button>
                   </div>
                   <select 
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={formData.zone}
                     onChange={e => setFormData({...formData, zone: e.target.value})}
                   >
@@ -971,7 +1239,7 @@ export default function App() {
                     <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
                     <input 
                       type="number" 
-                      className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 pl-12 focus:ring-2 focus:ring-blue-600 outline-none"
+                      className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 pl-12 focus:ring-2 focus:ring-orange-600 outline-none"
                       value={formData.earnings}
                       onChange={e => setFormData({...formData, earnings: parseInt(e.target.value)})}
                     />
@@ -984,7 +1252,7 @@ export default function App() {
                   setStep(4);
                   getQuote(formData.zone, formData.earnings);
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-all"
+                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-all"
               >
                 See my weekly premium <ChevronRight className="w-5 h-5" />
               </button>
@@ -1016,7 +1284,7 @@ export default function App() {
                   <input 
                     type="text" 
                     placeholder="John Doe"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
@@ -1026,7 +1294,7 @@ export default function App() {
                   <input 
                     type="tel" 
                     placeholder="+91 98765 43210"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={formData.phone}
                     onChange={e => setFormData({...formData, phone: e.target.value})}
                   />
@@ -1036,7 +1304,7 @@ export default function App() {
                   <input 
                     type="text" 
                     placeholder="EX: ZEP-4421"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={formData.platformId}
                     onChange={e => setFormData({...formData, platformId: e.target.value})}
                   />
@@ -1046,7 +1314,7 @@ export default function App() {
                   <input 
                     type="text" 
                     placeholder="rider@upi"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 outline-none"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 focus:ring-2 focus:ring-orange-600 outline-none"
                     value={formData.upiId}
                     onChange={e => setFormData({...formData, upiId: e.target.value})}
                   />
@@ -1055,7 +1323,7 @@ export default function App() {
               <button 
                 onClick={handleRegister}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50"
+                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-950/25 transition-all disabled:opacity-50"
               >
                 {loading ? "Activating..." : "Pay & Activate Policy"}
               </button>
@@ -1077,7 +1345,7 @@ export default function App() {
             >
               {!quote ? (
                 <div className="text-center py-12 space-y-4">
-                  <Activity className="w-12 h-12 text-blue-500 animate-pulse mx-auto" />
+                  <Activity className="w-12 h-12 text-orange-500 animate-pulse mx-auto" />
                   <p className="text-neutral-400">Calculating premium from zone, season, and live conditions…</p>
                 </div>
               ) : (
@@ -1086,22 +1354,22 @@ export default function App() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-xs text-neutral-500 uppercase font-bold">Weekly Premium</p>
-                        <p className="text-4xl font-bold text-blue-500">₹{quote.premium}</p>
+                        <p className="text-4xl font-bold text-orange-500">₹{quote.premium}</p>
                       </div>
-                      <div className="bg-blue-600/10 text-blue-500 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                      <div className="bg-orange-600/10 text-orange-500 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                         <Activity className="w-3 h-3" /> Band pricing
                       </div>
                     </div>
 
-                    <div className="bg-blue-900/20 border border-blue-800/30 rounded-2xl p-4 space-y-3">
-                      <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+                    <div className="rounded-2xl border border-orange-800/30 bg-orange-950/40 p-4 space-y-3">
+                      <div className="flex items-center gap-2 text-orange-400 font-bold text-xs uppercase tracking-wider">
                         <Shield className="w-4 h-4" />
                         SHAP-style breakdown
                       </div>
                       <p className="text-xs text-amber-100/95 font-medium leading-relaxed">
                         {quote.breakdown.shapSummary}
                       </p>
-                      <p className="text-xs text-blue-100/90 leading-relaxed italic">
+                      <p className="text-xs text-orange-100/90 leading-relaxed italic">
                         "{quote.aiRisk.reasoning}"
                       </p>
                       <div className="grid grid-cols-2 gap-4 pt-2">
@@ -1124,7 +1392,7 @@ export default function App() {
                           <p className="text-[10px] text-neutral-500 uppercase font-bold">Predicted Triggers</p>
                           <div className="flex gap-1 flex-wrap">
                             {quote.aiRisk.predictedDisruptions.map((d: string) => (
-                              <span key={d} className="text-[9px] bg-blue-800/40 px-1.5 py-0.5 rounded text-blue-200 font-bold uppercase border border-blue-700/30">{d}</span>
+                              <span key={d} className="rounded border border-orange-700/30 bg-orange-800/40 px-1.5 py-0.5 text-[9px] font-bold uppercase text-orange-200">{d}</span>
                             ))}
                           </div>
                         </div>
@@ -1171,7 +1439,7 @@ export default function App() {
                       }
                     }}
                     disabled={loading}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-900/20 transition-all"
+                    className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-orange-950/25 transition-all"
                   >
                     {loading ? "Processing..." : "Protect My Income"}
                   </button>
@@ -1201,13 +1469,14 @@ export default function App() {
                   fetchPolicy();
                   fetchClaims();
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20"
+                className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-950/25"
               >
                 Go to Dashboard
               </button>
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     );
   }
@@ -1217,7 +1486,7 @@ export default function App() {
       {/* Header */}
       <header className="p-6 flex justify-between items-center border-b border-neutral-900 sticky top-0 bg-neutral-950/80 backdrop-blur-md z-10">
         <div className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-blue-500" />
+          <Shield className="w-6 h-6 text-orange-500" />
           <span className="font-bold text-lg">GigShield</span>
         </div>
         <div className="flex items-center gap-3">
@@ -1250,7 +1519,7 @@ export default function App() {
                     ) : (
                       notifications.map(n => (
                         <div key={n.id} className="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                          <p className="text-xs font-bold text-blue-400">{n.title}</p>
+                          <p className="text-xs font-bold text-orange-400">{n.title}</p>
                           <p className="text-[10px] text-neutral-400 mt-1">{n.message}</p>
                           <p className="text-[9px] text-neutral-600 mt-2">{new Date(n.timestamp).toLocaleTimeString()}</p>
                         </div>
@@ -1281,12 +1550,12 @@ export default function App() {
 
               <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 space-y-4">
                 <div className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-500" />
+                  <Activity className="w-5 h-5 text-orange-500" />
                   <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-500">Pricing & Payout Intelligence</h3>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800">
-                    <p className="text-xs font-bold text-blue-400 mb-1">Dynamic Pricing Model</p>
+                    <p className="text-xs font-bold text-orange-400 mb-1">Dynamic Pricing Model</p>
                     <p className="text-[10px] text-neutral-500 leading-relaxed">
                       Gemini-3-Flash calculates weekly premiums by analyzing hyperlocal risk factors (monsoon history, traffic density, AQI trends) for each zone.
                     </p>
@@ -1308,7 +1577,7 @@ export default function App() {
                   </div>
                   <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
                     <p className="text-xs text-neutral-500 uppercase font-bold">Loss Ratio</p>
-                    <p className="text-2xl font-bold text-blue-500">{adminStats.lossRatio}%</p>
+                    <p className="text-2xl font-bold text-orange-500">{adminStats.lossRatio}%</p>
                   </div>
                   <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
                     <p className="text-xs text-neutral-500 uppercase font-bold">Total Premiums</p>
@@ -1327,7 +1596,7 @@ export default function App() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
                     <button onClick={() => triggerSim('Rain')} className="w-full bg-neutral-800 p-3 rounded-xl text-xs font-medium flex items-center justify-center gap-2 hover:bg-neutral-700">
-                      <CloudRain className="w-4 h-4 text-blue-500" /> Rain ({'>'}5mm)
+                      <CloudRain className="w-4 h-4 text-orange-500" /> Rain ({'>'}5mm)
                     </button>
                   </div>
                   <div className="space-y-1">
@@ -1342,7 +1611,7 @@ export default function App() {
                   </div>
                   <div className="space-y-1">
                     <button onClick={() => triggerSim('Traffic')} className="w-full bg-neutral-800 p-3 rounded-xl text-xs font-medium flex items-center justify-center gap-2 hover:bg-neutral-700">
-                      <Activity className="w-4 h-4 text-purple-500" /> Traffic ({'>'}80%)
+                      <Activity className="h-4 w-4 text-orange-400" /> Traffic ({'>'}80%)
                     </button>
                   </div>
                   <button onClick={() => triggerSim('Flood')} className="col-span-2 bg-red-900/20 p-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-red-400 hover:bg-red-900/30 border border-red-900/30">
@@ -1360,8 +1629,8 @@ export default function App() {
                     allRiders.map(r => (
                       <div key={r.id} className="bg-neutral-900 border border-neutral-800 rounded-xl p-3 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded bg-blue-600/10 flex items-center justify-center">
-                            <User className="w-4 h-4 text-blue-500" />
+                          <div className="w-8 h-8 rounded bg-orange-600/10 flex items-center justify-center">
+                            <User className="w-4 h-4 text-orange-500" />
                           </div>
                           <div>
                             <p className="text-xs font-bold">{r.platformId}</p>
@@ -1409,7 +1678,7 @@ export default function App() {
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             "w-8 h-8 rounded flex items-center justify-center",
-                            c.type === 'Rain' ? "bg-blue-500/10 text-blue-500" : "bg-orange-500/10 text-orange-500"
+                            c.type === 'Rain' ? "bg-orange-500/10 text-orange-400" : "bg-amber-500/10 text-amber-400"
                           )}>
                             {c.type === 'Rain' ? <CloudRain className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
                           </div>
@@ -1445,7 +1714,7 @@ export default function App() {
                           <p className="text-[10px] text-neutral-500">Rider: {p.riderId}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs font-bold text-blue-500">₹{p.premium}</p>
+                          <p className="text-xs font-bold text-orange-500">₹{p.premium}</p>
                           <p className="text-[10px] text-neutral-500 uppercase font-bold">{p.status}</p>
                         </div>
                       </div>
@@ -1469,7 +1738,7 @@ export default function App() {
               <p className="text-neutral-400">Admin access required.</p>
               <button 
                 onClick={handleLogout}
-                className="text-blue-500 font-bold"
+                className="text-orange-500 font-bold"
               >
                 Go Back
               </button>
@@ -1483,13 +1752,13 @@ export default function App() {
                   {/* Status Card */}
                   <div 
                     onClick={() => setShowPolicyDetails(true)}
-                    className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-6 shadow-xl shadow-blue-900/20 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+                    className="relative cursor-pointer overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 to-orange-950 p-6 shadow-xl shadow-orange-950/25 transition-transform active:scale-[0.98]"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                     <div className="relative z-10">
                       <div className="flex justify-between items-start mb-8">
                         <div>
-                          <p className="text-blue-100 text-sm font-medium mb-1">Weekly Protection</p>
+                          <p className="text-orange-100 text-sm font-medium mb-1">Weekly Protection</p>
                           <h2 className="text-3xl font-bold">{policy ? "Active" : "Inactive"}</h2>
                         </div>
                         <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-xs font-bold">
@@ -1498,11 +1767,11 @@ export default function App() {
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-blue-100 text-xs mb-1">Total Payouts (This Week)</p>
+                          <p className="text-orange-100 text-xs mb-1">Total Payouts (This Week)</p>
                           <p className="text-2xl font-bold">₹{claims.reduce((acc, c) => acc + c.amount, 0)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-blue-100 text-xs mb-1">Weekly Premium</p>
+                          <p className="text-orange-100 text-xs mb-1">Weekly Premium</p>
                           <p className="text-lg font-bold">₹{policy?.premium || 0}</p>
                         </div>
                       </div>
@@ -1550,7 +1819,7 @@ export default function App() {
                           </p>
                           <div className="bg-neutral-950 p-3 rounded-xl border border-neutral-800 mb-4">
                             <p className="text-[10px] text-neutral-400">
-                              <span className="font-bold text-blue-400">Note:</span> Policy updates (zone, earnings) are handled via renewal to maintain actuarial consistency.
+                              <span className="font-bold text-orange-400">Note:</span> Policy updates (zone, earnings) are handled via renewal to maintain actuarial consistency.
                             </p>
                           </div>
                           <button 
@@ -1595,8 +1864,8 @@ export default function App() {
                   )}
 
                   {policy && (
-                    <div className="bg-blue-600/10 border border-blue-600/20 rounded-2xl p-4 flex items-start gap-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <div className="flex items-start gap-3 rounded-2xl border border-orange-500/20 bg-orange-600/10 p-4">
+                      <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shrink-0">
                         <CheckCircle2 className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -1621,7 +1890,7 @@ export default function App() {
                         <button 
                           type="button"
                           onClick={() => setShowManualClaim(!showManualClaim)}
-                          className="text-[10px] text-blue-500 font-bold uppercase"
+                          className="text-[10px] text-orange-500 font-bold uppercase"
                         >
                           Did we miss anything?
                         </button>
@@ -1639,7 +1908,7 @@ export default function App() {
                           If you lost earnings from a disruption our sensors didn&apos;t pick up, tell us in your own words. Our team will review within 24–48 hours.
                         </p>
                         <textarea
-                          className="w-full min-h-[100px] bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-600 resize-y placeholder:text-neutral-600"
+                          className="w-full min-h-[100px] bg-neutral-950 border border-neutral-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-orange-600 resize-y placeholder:text-neutral-600"
                           placeholder="e.g. Dark store closed for 4 hours yesterday due to local strike — I couldn’t work…"
                           value={missedAnythingText}
                           onChange={(e) => setMissedAnythingText(e.target.value)}
@@ -1676,7 +1945,7 @@ export default function App() {
                               alert("Could not submit — check server.");
                             }
                           }}
-                          className="w-full bg-blue-600 py-2 rounded-lg text-xs font-bold"
+                          className="w-full bg-orange-600 py-2 rounded-lg text-xs font-bold"
                         >
                           Submit for review
                         </button>
@@ -1685,7 +1954,7 @@ export default function App() {
 
                     <div className="grid grid-cols-3 gap-3">
                       <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 flex flex-col items-center gap-2">
-                        <CloudRain className="w-5 h-5 text-blue-400" />
+                        <CloudRain className="w-5 h-5 text-orange-400" />
                         <span className="text-xs text-neutral-400">Rain</span>
                         <span className="text-sm font-bold">{weather ? `${weather.rain}mm/h` : "--"}</span>
                       </div>
@@ -1706,7 +1975,7 @@ export default function App() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider">Recent Payouts</h3>
-                      <button onClick={() => setView('history')} className="text-xs text-blue-500 font-medium">View All</button>
+                      <button onClick={() => setView('history')} className="text-xs text-orange-500 font-medium">View All</button>
                     </div>
                     <div className="space-y-3">
                       {claims.length === 0 ? (
@@ -1725,8 +1994,8 @@ export default function App() {
                             <div className="flex items-center gap-4">
                               <div className={cn(
                                 "w-10 h-10 rounded-xl flex items-center justify-center",
-                                claim.type === 'Rain' ? "bg-blue-500/10 text-blue-500" : 
-                                claim.type === 'AQI' ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"
+                                claim.type === 'Rain' ? "bg-orange-500/15 text-orange-300" : 
+                                claim.type === 'AQI' ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
                               )}>
                                 {claim.type === 'Rain' ? <CloudRain className="w-5 h-5" /> : 
                                  claim.type === 'AQI' ? <Wind className="w-5 h-5" /> : <Thermometer className="w-5 h-5" />}
@@ -1756,8 +2025,8 @@ export default function App() {
                 >
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center">
-                        <Shield className="w-6 h-6 text-blue-500" />
+                      <div className="w-10 h-10 bg-orange-600/10 rounded-xl flex items-center justify-center">
+                        <Shield className="w-6 h-6 text-orange-500" />
                       </div>
                       <h2 className="text-2xl font-bold">Policy History</h2>
                     </div>
@@ -1774,7 +2043,7 @@ export default function App() {
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="text-xs font-bold text-blue-500">₹{p.premium}</p>
+                              <p className="text-xs font-bold text-orange-500">₹{p.premium}</p>
                               <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${
                                 p.status === 'active' ? 'bg-green-500/20 text-green-500' : 
                                 p.status === 'cancelled' ? 'bg-red-500/20 text-red-500' : 'bg-neutral-800 text-neutral-500'
@@ -1815,9 +2084,9 @@ export default function App() {
                               <div className="flex items-center gap-4">
                                 <div className={cn(
                                   "w-12 h-12 rounded-xl flex items-center justify-center",
-                                  claim.type === 'Rain' ? "bg-blue-500/10 text-blue-500" : 
-                                  claim.type === 'AQI' ? "bg-green-500/10 text-green-500" : 
-                                  claim.type === 'Heat' ? "bg-orange-500/10 text-orange-500" : "bg-purple-500/10 text-purple-500"
+                                  claim.type === 'Rain' ? "bg-orange-500/15 text-orange-300" : 
+                                  claim.type === 'AQI' ? "bg-emerald-500/10 text-emerald-400" : 
+                                  claim.type === 'Heat' ? "bg-amber-500/10 text-amber-400" : "bg-orange-800/25 text-orange-300"
                                 )}>
                                   {claim.type === 'Rain' ? <CloudRain className="w-6 h-6" /> : 
                                    claim.type === 'AQI' ? <Wind className="w-6 h-6" /> : 
@@ -1863,7 +2132,7 @@ export default function App() {
                             <span className={cn(
                               "text-[10px] uppercase font-bold px-2 py-0.5 rounded",
                               z.risk === 'Very High' ? "bg-red-500/20 text-red-500" :
-                              z.risk === 'High' ? "bg-orange-500/20 text-orange-500" : "bg-blue-500/20 text-blue-500"
+                              z.risk === 'High' ? "bg-orange-500/20 text-orange-500" : "bg-orange-500/10 text-orange-400"
                             )}>
                               {z.risk} Risk
                             </span>
@@ -1888,7 +2157,7 @@ export default function App() {
                   <h2 className="text-2xl font-bold">Profile</h2>
                   <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 space-y-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center">
+                      <div className="w-16 h-16 bg-orange-600 rounded-2xl flex items-center justify-center">
                         <User className="w-8 h-8 text-white" />
                       </div>
                       <div>
@@ -1922,7 +2191,7 @@ export default function App() {
             </>
           ) : (
             <div className="text-center py-20 space-y-4">
-              <Activity className="w-12 h-12 text-blue-500 mx-auto animate-pulse" />
+              <Activity className="w-12 h-12 text-orange-500 mx-auto animate-pulse" />
               <p className="text-neutral-400">Loading your protection dashboard...</p>
             </div>
           )
@@ -1934,28 +2203,28 @@ export default function App() {
         <nav className="fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-900 p-4 flex justify-around items-center z-10">
           <button 
             onClick={() => setView('dashboard')}
-            className={cn("flex flex-col items-center gap-1", view === 'dashboard' ? "text-blue-500" : "text-neutral-500")}
+            className={cn("flex flex-col items-center gap-1", view === 'dashboard' ? "text-orange-500" : "text-neutral-500")}
           >
             <Shield className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase">Shield</span>
           </button>
           <button 
             onClick={() => setView('history')}
-            className={cn("flex flex-col items-center gap-1", view === 'history' ? "text-blue-500" : "text-neutral-500")}
+            className={cn("flex flex-col items-center gap-1", view === 'history' ? "text-orange-500" : "text-neutral-500")}
           >
             <History className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase">History</span>
           </button>
           <button 
             onClick={() => setView('zones')}
-            className={cn("flex flex-col items-center gap-1", view === 'zones' ? "text-blue-500" : "text-neutral-500")}
+            className={cn("flex flex-col items-center gap-1", view === 'zones' ? "text-orange-500" : "text-neutral-500")}
           >
             <MapPin className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase">Zones</span>
           </button>
           <button 
             onClick={() => setView('profile')}
-            className={cn("flex flex-col items-center gap-1", view === 'profile' ? "text-blue-500" : "text-neutral-500")}
+            className={cn("flex flex-col items-center gap-1", view === 'profile' ? "text-orange-500" : "text-neutral-500")}
           >
             <User className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase">Profile</span>

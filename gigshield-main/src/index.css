@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@layer base {
+  .font-syne {
+    font-family: "Syne", system-ui, sans-serif;
+  }
+  .font-dm {
+    font-family: "DM Sans", system-ui, sans-serif;
+  }
+}
