@@ -1,0 +1,7 @@
+{
+  "name": "Remix: Remix: GigShield main",
+  "description": "Parametric Income Insurance for Q-Commerce Delivery Partners with automated hyperlocal disruption protection.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
