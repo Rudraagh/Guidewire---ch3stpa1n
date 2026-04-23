@@ -1,4 +1,4 @@
-# GigShield
+# SureGig
 ### Parametric Income Insurance for Q-Commerce Delivery Partners
 
 > Automated income protection for Zepto / Blinkit / Dunzo riders against hyperlocal disruptions — no claim filing, no paperwork, instant payouts.
@@ -9,7 +9,7 @@
 
 1. [Problem Statement](#1-problem-statement)
 2. [Persona & Scenarios](#2-persona--scenarios)
-3. [How GigShield Works — Core Workflow](#3-how-gigshield-works--core-workflow)
+3. [How SureGig Works — Core Workflow](#3-how-SureGig-works--core-workflow)
 4. [Insurance Model](#4-insurance-model)
 5. [Weekly Premium Model](#5-weekly-premium-model)
 6. [Parametric Trigger System](#6-parametric-trigger-system)
@@ -32,7 +32,7 @@ Q-Commerce delivery partners (Zepto, Blinkit, Dunzo) operate on a fundamentally 
 
 When a disruption hits — waterlogging near a dark store, a zone-level curfew, an AQI spike that halts platform operations — a rider can lose 3–6 hours of earning time in a single event. With no employer, no sick pay, and no safety net, the full financial loss falls on them.
 
-**GigShield pays them automatically when this happens. No claim filing. No waiting. No paperwork.**
+**SureGig pays them automatically when this happens. No claim filing. No waiting. No paperwork.**
 
 Key constraints this product strictly respects:
 - Coverage is for **lost income only** — no health, life, accident, or vehicle repair coverage
@@ -54,23 +54,23 @@ Q-Commerce riders are uniquely vulnerable because:
 
 ### Scenario A — Hyperlocal Waterlogging
 
-Rajan works out of a Blinkit dark store in Dharavi, Mumbai. On a Tuesday in July, heavy rainfall causes waterlogging specifically in his zone. Blinkit suspends deliveries from his dark store at 11am. GigShield's scheduler detects rainfall > 20mm/hr in his pin code at 11:15am, cross-references that no other dark store in adjacent zones has suspended, computes a high confidence score, and automatically triggers a claim. By 11:30am, ₹180 is in Rajan's UPI account for the 3 hours of lost earnings.
+Rajan works out of a Blinkit dark store in Dharavi, Mumbai. On a Tuesday in July, heavy rainfall causes waterlogging specifically in his zone. Blinkit suspends deliveries from his dark store at 11am. SureGig's scheduler detects rainfall > 20mm/hr in his pin code at 11:15am, cross-references that no other dark store in adjacent zones has suspended, computes a high confidence score, and automatically triggers a claim. By 11:30am, ₹180 is in Rajan's UPI account for the 3 hours of lost earnings.
 
 ### Scenario B — AQI-Triggered Platform Halt
 
-Priya works for Zepto in Delhi during November. AQI in her zone crosses 350 — Zepto officially pauses operations in her delivery area. GigShield detects the AQI threshold breach via CPCB data, validates it against the platform suspension signal, and fires a payout within 20 minutes. Priya didn't open the app. She didn't file anything.
+Priya works for Zepto in Delhi during November. AQI in her zone crosses 350 — Zepto officially pauses operations in her delivery area. SureGig detects the AQI threshold breach via CPCB data, validates it against the platform suspension signal, and fires a payout within 20 minutes. Priya didn't open the app. She didn't file anything.
 
 ### Scenario C — Zone-Level Bandh
 
-Arjun's dark store zone in Bengaluru experiences a local transport strike on a Monday morning. Traffic API data shows near-zero movement in his pin code. No pickups or drops are being completed by any rider in the zone. GigShield's consensus mechanism detects that 80%+ of active riders in the zone are stationary, confirms the disruption, and auto-initiates claims for all of them simultaneously.
+Arjun's dark store zone in Bengaluru experiences a local transport strike on a Monday morning. Traffic API data shows near-zero movement in his pin code. No pickups or drops are being completed by any rider in the zone. SureGig's consensus mechanism detects that 80%+ of active riders in the zone are stationary, confirms the disruption, and auto-initiates claims for all of them simultaneously.
 
 ### Scenario D — Extreme Heat
 
-In May, Hyderabad sees temperatures cross 44°C for three consecutive days. Dunzo reduces operating hours to avoid rider safety complaints. GigShield detects the temperature threshold breach and adjusts payouts proportionally to the hours of reduced operations.
+In May, Hyderabad sees temperatures cross 44°C for three consecutive days. Dunzo reduces operating hours to avoid rider safety complaints. SureGig detects the temperature threshold breach and adjusts payouts proportionally to the hours of reduced operations.
 
 ---
 
-## 3. How GigShield Works — Core Workflow
+## 3. How SureGig Works — Core Workflow
 
 There are two distinct loops running in the system simultaneously.
 
@@ -165,9 +165,9 @@ Risk profile generated → first weekly premium quoted
 
 ## 4. Insurance Model
 
-### What GigShield Insures
+### What SureGig Insures
 
-GigShield insures **lost working hours caused by verified external disruptions**. It does not insure health, accidents, vehicle damage, or any event caused by the rider's own actions.
+SureGig insures **lost working hours caused by verified external disruptions**. It does not insure health, accidents, vehicle damage, or any event caused by the rider's own actions.
 
 ### Payout Calculation (Deterministic — No ML)
 
@@ -411,7 +411,7 @@ Monthly (first Sunday):
 
 ### The Parametric Advantage
 
-Because GigShield's triggers are based on external verified data (not the rider's report), the primary fraud vectors of traditional insurance are largely eliminated. The rider cannot fake the weather. However, several attack surfaces remain:
+Because SureGig's triggers are based on external verified data (not the rider's report), the primary fraud vectors of traditional insurance are largely eliminated. The rider cannot fake the weather. However, several attack surfaces remain:
 
 ### Attack Surface 1 — Fake Location / GPS Spoofing
 
@@ -531,7 +531,7 @@ One teleport event = soft flag. Two within a session = hard flag. Three = sessio
 
 #### Detection Layer 5 — Basal Location Profile (Prior Delivery History)
 
-This is GigShield's most durable anti-spoofing layer. The core insight: **a spoofer can fake their live GPS stream, but they cannot retroactively fake weeks of delivery history.**
+This is SureGig's most durable anti-spoofing layer. The core insight: **a spoofer can fake their live GPS stream, but they cannot retroactively fake weeks of delivery history.**
 
 After a rider's first 2 weeks on the platform, their delivery activity builds a location fingerprint — which zones they operate in, at what times of day, what their typical movement radius looks like, how long they stay near the dark store. This fingerprint is stored as a probability distribution over zones and time windows.
 
@@ -547,7 +547,7 @@ The fraud and spoofing detection above depends on a continuous, reliable stream 
 
 #### What Real-Time Actually Means Here
 
-Real-time in GigShield's context means: **continuously knowing, with high confidence, whether a worker is genuinely present and active in their zone during a disruption window.**
+Real-time in SureGig's context means: **continuously knowing, with high confidence, whether a worker is genuinely present and active in their zone during a disruption window.**
 
 This is not the same as constant GPS polling every second. Naïve constant polling drains battery, gets spoofed easily on slow connections, and creates more noise than signal. The correct architecture is near-real-time with intelligent adaptive sampling — data flows continuously but efficiently.
 
@@ -599,13 +599,13 @@ The app does not sample at a fixed rate. Sampling frequency adapts to context:
 | Session flagged | Every 5 seconds | Increased scrutiny |
 | Disconnected / reconnecting | Local buffer, flush on reconnect | Network unavailable |
 
-Implemented via `react-native-background-geolocation` running as a foreground service with a persistent notification. This is mandatory on modern Android to prevent the OS from killing the location service during aggressive battery optimization. The notification is minimal and rider-friendly: "GigShield is verifying your coverage zone."
+Implemented via `react-native-background-geolocation` running as a foreground service with a persistent notification. This is mandatory on modern Android to prevent the OS from killing the location service during aggressive battery optimization. The notification is minimal and rider-friendly: "SureGig is verifying your coverage zone."
 
 Data is batched — the app accumulates 3–5 location readings locally and sends them as a single payload every 10–30 seconds rather than one HTTP/WS call per reading. This reduces connection overhead while maintaining near-real-time fidelity.
 
 #### Handling Network Drops (India Reality)
 
-Network connectivity in Indian urban areas is genuinely unreliable — cell tower congestion during storms, dead zones in dense buildings near dark stores, carrier switching. GigShield's architecture treats disconnection as a normal operating condition, not an exception.
+Network connectivity in Indian urban areas is genuinely unreliable — cell tower congestion during storms, dead zones in dense buildings near dark stores, carrier switching. SureGig's architecture treats disconnection as a normal operating condition, not an exception.
 
 When the WebSocket connection drops:
 - The app continues sampling locally at the current adaptive rate
@@ -650,7 +650,7 @@ Workers who are outside their geofence when the trigger fires — regardless of 
 
 Before describing defenses, it's worth stating the key insight clearly: **in a truly parametric system, GPS spoofing at claim time is not the real attack vector.**
 
-GigShield's triggers fire based on external weather and AQI data — not on anything the worker reports or does. When it rains heavily in Zone X, every active policy registered to Zone X triggers automatically. A worker sitting at home cannot spoof their GPS at claim time to collect a payout, because their zone was locked at onboarding. The weather data is external. There is nothing for them to manipulate at the moment of payout.
+SureGig's triggers fire based on external weather and AQI data — not on anything the worker reports or does. When it rains heavily in Zone X, every active policy registered to Zone X triggers automatically. A worker sitting at home cannot spoof their GPS at claim time to collect a payout, because their zone was locked at onboarding. The weather data is external. There is nothing for them to manipulate at the moment of payout.
 
 The real attack surface is earlier and more fundamental: **onboarding and policy registration.** A syndicate of 500 bad actors doesn't spoof GPS during a storm. They register fake or misrepresented policies in high-risk zones before the storm, then collect legitimate-looking payouts when the parametric trigger fires.
 
@@ -666,7 +666,7 @@ A worker who operates in a low-risk zone registers their policy claiming they wo
 
 **Defense: Dark Store Binding**
 
-A Q-Commerce rider is not just "in a zone" — they are assigned to a specific dark store by Zepto or Blinkit. That dark store has a fixed, verifiable address. At onboarding, the rider enters their platform partner ID. GigShield cross-references that partner ID against our dark store registry and derives the policy zone from the dark store's location — not from anything the rider declares.
+A Q-Commerce rider is not just "in a zone" — they are assigned to a specific dark store by Zepto or Blinkit. That dark store has a fixed, verifiable address. At onboarding, the rider enters their platform partner ID. SureGig cross-references that partner ID against our dark store registry and derives the policy zone from the dark store's location — not from anything the rider declares.
 
 The rider cannot choose their zone. Zone = dark store assignment. This single structural decision eliminates the most common zone fraud attack entirely.
 
@@ -674,7 +674,7 @@ In our current implementation, the dark store registry is a manually curated dat
 
 **Defense: One-Time Policy Activation Location Check**
 
-At policy activation each Monday morning, GigShield performs a single GPS check — not continuous tracking, just one verification that the rider's device is physically within 3km of their registered dark store at the time they activate their weekly policy. If they are activating from 40km away, the policy is held pending verification.
+At policy activation each Monday morning, SureGig performs a single GPS check — not continuous tracking, just one verification that the rider's device is physically within 3km of their registered dark store at the time they activate their weekly policy. If they are activating from 40km away, the policy is held pending verification.
 
 This check is:
 - One-time per week, not continuous surveillance
@@ -697,11 +697,11 @@ One Zepto/Blinkit partner ID = one account. Valid partner IDs are issued by the 
 
 **Defense Layer 3: Device Fingerprint Graph**
 
-Every device that onboards with GigShield gets a fingerprint (hardware ID, screen resolution, OS build, installed font set). This fingerprint is stored and linked to the account. If multiple accounts are ever created or logged in from the same device, they become linked nodes in our device graph. A fraud ring rotating accounts across the same hardware will surface as a connected component in the graph even if each account individually appears clean.
+Every device that onboards with SureGig gets a fingerprint (hardware ID, screen resolution, OS build, installed font set). This fingerprint is stored and linked to the account. If multiple accounts are ever created or logged in from the same device, they become linked nodes in our device graph. A fraud ring rotating accounts across the same hardware will surface as a connected component in the graph even if each account individually appears clean.
 
 **Defense Layer 4: Registration Velocity Monitoring**
 
-Real organic platform growth does not look like 50 new accounts appearing in one pin code over 48 hours. GigShield monitors registration rate per zone continuously. A spike in registrations in a specific zone — especially one that correlates with a publicly announced IMD weather alert — flags the entire cohort for manual review before their policies activate.
+Real organic platform growth does not look like 50 new accounts appearing in one pin code over 48 hours. SureGig monitors registration rate per zone continuously. A spike in registrations in a specific zone — especially one that correlates with a publicly announced IMD weather alert — flags the entire cohort for manual review before their policies activate.
 
 The key signal: **legitimate riders buy insurance before they know a specific event is coming, not after.** A cohort that registers in a high-risk zone within 48 hours of a red alert being issued publicly is suspicious by definition.
 
@@ -711,13 +711,13 @@ Each dark store zone has a maximum number of active policies it can hold, set at
 
 **Defense Layer 6: Zone-Level Claim Rate Anomaly**
 
-When a trigger fires, GigShield computes the claim rate for that zone — what percentage of active policies are triggering. Real disruptions affect most riders in a zone, but not all (some are on leave, some work different shifts, some are in adjacent areas). A claim rate above 75% in a single zone for a single event is statistically implausible for a genuine rider population and automatically triggers a zone-wide payout hold pending review.
+When a trigger fires, SureGig computes the claim rate for that zone — what percentage of active policies are triggering. Real disruptions affect most riders in a zone, but not all (some are on leave, some work different shifts, some are in adjacent areas). A claim rate above 75% in a single zone for a single event is statistically implausible for a genuine rider population and automatically triggers a zone-wide payout hold pending review.
 
 ---
 
 #### Attack Vector 3 — Threshold Gaming
 
-A sophisticated syndicate studies GigShield's parametric thresholds (e.g. rain > 20mm/hr triggers payout). They identify which zones trigger most frequently historically and concentrate legitimate-looking policies there. They are not cheating the trigger — they are making strategic bets on high-frequency disruption zones.
+A sophisticated syndicate studies SureGig's parametric thresholds (e.g. rain > 20mm/hr triggers payout). They identify which zones trigger most frequently historically and concentrate legitimate-looking policies there. They are not cheating the trigger — they are making strategic bets on high-frequency disruption zones.
 
 This is the hardest attack to fully prevent because it blurs into legitimate behavior. A real rider in a flood-prone zone should also be buying coverage there.
 
@@ -737,7 +737,7 @@ Individual account checks catch individual bad actors. A coordinated ring delibe
 
 **The account relationship graph:**
 
-GigShield maintains a live graph where:
+SureGig maintains a live graph where:
 - Nodes = rider accounts
 - Edges = shared attributes (same device, same UPI ID, same bank account, onboarded within the same 6-hour window, registered to the same zone within 48 hours of a weather alert)
 
@@ -782,7 +782,7 @@ When any account is flagged, the action is always a time-bounded hold with a hum
 
 During a real heavy rain event, cell towers in the affected zone get congested. GPS signals jump erratically. A genuine rider's phone may show GPS anomalies — location jumping, signal loss, inaccurate positioning — that look superficially similar to spoofing signals.
 
-GigShield handles this with a **weather-context GPS tolerance layer:**
+SureGig handles this with a **weather-context GPS tolerance layer:**
 
 - When a trigger fires in a zone, the system simultaneously records the severity of the weather event
 - GPS anomalies that occur during a confirmed high-severity event (e.g. red alert rainfall) are weighted significantly lower as fraud signals than identical anomalies on a clear day
@@ -798,7 +798,7 @@ GigShield handles this with a **weather-context GPS tolerance layer:**
 - If upheld: payout released immediately + ₹25 goodwill credit for the inconvenience
 - After 3 upheld appeals in a rider's history: their fraud sensitivity threshold is permanently lowered — the system learns they are a genuine user and treats them accordingly
 
-**What GigShield commits to never doing:**
+**What SureGig commits to never doing:**
 
 - Never accusing a rider of fraud in any rider-facing communication unless suspending with cause
 - Never requiring document uploads or in-person verification for standard claims
@@ -936,4 +936,4 @@ Q-Commerce platforms (Zepto, Blinkit) do not expose public APIs for worker data.
 
 ---
 
-*GigShield — built for the riders who keep your groceries moving.*
+*SureGig — built for the riders who keep your groceries moving.*
